@@ -1,9 +1,14 @@
 package com.example.tiget.fortniteapi;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-
+import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -11,7 +16,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static int[] Colors;
+
     public static int[] BackgroundScreens;
+    public static SharedPreferences sharedPreferences;
+    public static double ImageScale = 1;
 
     public static int SCREEN_WIDTH_PX;
     public static int SCREEN_HEIGHT_PX;
@@ -24,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+
+
+
 
         BackgroundScreens = new int[] {
             R.drawable.fire_lord,
@@ -34,10 +50,19 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.omen,
             R.drawable.red_knight};
 
+
         Colors = new int[]{
             getResources().getColor(R.color.colorWhite),
             getResources().getColor(R.color.colorGreen),
             getResources().getColor(R.color.colorOrange)};
+
+
+
+        editor.putInt("image", (int) (Math.random() * BackgroundScreens.length));
+        editor.apply();
+
+
+        Log.e("fkpoasfpoa","Main" + sharedPreferences.getInt("image", -1));
 
 
         DisplayMetrics dm = new DisplayMetrics();

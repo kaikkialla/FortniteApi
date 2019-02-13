@@ -22,20 +22,20 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
 
 
 import static com.example.tiget.fortniteapi.Api.loadStore;
 import static com.example.tiget.fortniteapi.MainActivity.BackgroundScreens;
 import static com.example.tiget.fortniteapi.MainActivity.SCREEN_WIDTH_PX;
 import static com.example.tiget.fortniteapi.MainActivity.density;
+import static com.example.tiget.fortniteapi.MainActivity.sharedPreferences;
 
 
 public class DailyShop extends Fragment {
 
     ImageView bg;
     GridView gridview;
-
+    ShopAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,18 +47,21 @@ public class DailyShop extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        adapter = new ShopAdapter(getContext());
         bg = view.findViewById(R.id.bg);
-        bg.setImageResource(BackgroundScreens[(int) (Math.random() * BackgroundScreens.length)]);
+        bg.setImageResource(BackgroundScreens[sharedPreferences.getInt("image", 0)]);
 
         loadStore();
         gridview = view.findViewById(R.id.gridView);
+        gridview.setNumColumns(2);
+        gridview.setAdapter(adapter);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(Api.DatabaseChangeEvent event) {
         if(event.loaded == true) {
-            gridview.setNumColumns(2);
-            gridview.setAdapter(new ShopAdapter(getActivity()));
+            adapter.notifyDataSetChanged();
+            gridview.setAdapter(adapter);
         }
 
 
@@ -85,7 +88,7 @@ class ShopAdapter extends BaseAdapter {
 
 
     public ShopAdapter(Context c) {
-        mContext = c;
+        this.mContext = c;
     }
 
 
@@ -125,7 +128,7 @@ class ShopAdapter extends BaseAdapter {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(SCREEN_WIDTH_PX - 8 * density) / 2, (int)(SCREEN_WIDTH_PX - 8 * density) / 2);
         icon.setLayoutParams(params);
 
-
+        name.setSelected(true);
         ShopItem item = Api.ShopItems.get(position);
         Glide.with(mContext).load(item.image).into(icon);
         name.setText(item.name);

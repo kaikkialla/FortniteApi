@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import static com.example.tiget.fortniteapi.MainActivity.BackgroundScreens;
 import static com.example.tiget.fortniteapi.MainActivity.Colors;
+import static com.example.tiget.fortniteapi.MainActivity.sharedPreferences;
 
 
 public class Menu extends Fragment {
@@ -43,7 +44,9 @@ public class Menu extends Fragment {
         activity = getActivity();
 
         bg = view.findViewById(R.id.bg);
-        bg.setImageResource(BackgroundScreens[(int) (Math.random() * BackgroundScreens.length)]);
+        bg.setImageResource(BackgroundScreens[sharedPreferences.getInt("image", 0)]);
+
+        Log.e("fkpoasfpoa","Menu" + sharedPreferences.getInt("image", -1));
 
 
         GridView gridview = view.findViewById(R.id.gridView);
@@ -114,7 +117,7 @@ class MenuAdapter extends BaseAdapter {
         name = view.findViewById(R.id.name);
 
         icon.setImageResource(icons[position]);
-        name.setTextColor(Colors[position]);
+        //name.setTextColor(Colors[position]);
         name.setText(names[position]);
         return view;
     }

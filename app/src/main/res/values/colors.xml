@@ -9,5 +9,8 @@
     <color name="colorWhite">#efeae1</color>
 
 
+    <color name="text">#c9c5c5</color>
+    <color name="bg">#90000000</color>
+
 
 </resources>
