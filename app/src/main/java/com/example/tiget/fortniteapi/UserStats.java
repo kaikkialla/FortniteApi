@@ -1,7 +1,4 @@
 package com.example.tiget.fortniteapi;
 
-public class IdApi {
-}
-
-class IdResult {
+public class UserStats {
 }

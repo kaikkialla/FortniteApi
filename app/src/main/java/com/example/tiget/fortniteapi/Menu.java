@@ -61,7 +61,7 @@ public class Menu extends Fragment {
                         activity.getSupportFragmentManager().beginTransaction().addToBackStack("Tag").replace(R.id.frame_layout, new DailyShop()).commit();
                         break;
                     case 1:
-
+                        activity.getSupportFragmentManager().beginTransaction().addToBackStack("Tag").replace(R.id.frame_layout, new StatsFragment()).commit();
                         break;
                     case 2:
 

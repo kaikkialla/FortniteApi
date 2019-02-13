@@ -17,9 +17,18 @@ public class MainActivity extends AppCompatActivity {
 
     public static int[] Colors;
 
-    public static int[] BackgroundScreens;
+    public static int[] BackgroundScreens = new int[] {
+        R.drawable.fire_lord,
+         R.drawable.ice_lord,
+         R.drawable.ice_lord_casting_blizzard,
+         R.drawable.fly_trap,
+         R.drawable.norse_emblem,
+         R.drawable.omen,
+         R.drawable.red_knight};
+
+
     public static SharedPreferences sharedPreferences;
-    public static double ImageScale = 1;
+
 
     public static int SCREEN_WIDTH_PX;
     public static int SCREEN_HEIGHT_PX;
@@ -39,16 +48,7 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
 
 
-
-
-        BackgroundScreens = new int[] {
-            R.drawable.fire_lord,
-            R.drawable.ice_lord,
-            R.drawable.ice_lord_casting_blizzard,
-            R.drawable.fly_trap,
-            R.drawable.norse_emblem,
-            R.drawable.omen,
-            R.drawable.red_knight};
+        Api.loadId("Atlantis Mitr0");
 
 
         Colors = new int[]{

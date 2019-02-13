@@ -58,10 +58,11 @@ public class DailyShop extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(Api.DatabaseChangeEvent event) {
+    public void StoreStatusEvent(Api.storeStatus event) {
         if(event.loaded == true) {
             adapter.notifyDataSetChanged();
             gridview.setAdapter(adapter);
+
         }
 
 

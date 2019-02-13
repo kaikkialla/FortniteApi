@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,13 +23,15 @@ public class Api {
 
 
     public static ArrayList<ShopItem> ShopItems = new ArrayList<>();
-    public static int itemsQuantity;
+    //public static int itemsQuantity;
+    public static UserInfo userInfo;
 
     //Магаз- https://fortnite-public-api.theapinetwork.com/prod09/store/get?language={language}
     //id - https://fortnite-public-api.theapinetwork.com/prod09/users/id?username={name}
     //стата - https://fortnite-public-api.theapinetwork.com/prod09/users/public/br_stats?user_id={id}&platform={platform}
 
     private static final String DailyStoreApi = "https://fortnite-public-api.theapinetwork.com/prod09/store/get";
+
     private static final String UserStatsApi = "https://fortnite-public-api.theapinetwork.com/prod09/users/public/br_stats?user_id=4735ce9132924caf8a5b17789b40f79c&platform=pc";
     private static final String UserIdApi = "https://fortnite-public-api.theapinetwork.com/prod09/users/id";
     private static final String GameInfoApi = "https://fortnite-public-api.theapinetwork.com/prod09/status/fortnite_server_status";
@@ -42,12 +45,12 @@ public class Api {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e("AFSPIGIPSG", "Connected failure");
+                Log.e("AFSPIGIPSG", "Store Connected failure");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.e("AFSPIGIPSG", "Connected Successful");
+                Log.e("AFSPIGIPSG", "Store Connected Successful");
                 String data = response.body().string();
                 try {
                     parseStore(data);
@@ -66,7 +69,7 @@ public class Api {
 
         ShopItems.clear();
         JSONObject rootObject = new JSONObject(data);
-        itemsQuantity = rootObject.getInt("rows");
+        int itemsQuantity = rootObject.getInt("rows");
         JSONArray items = rootObject.getJSONArray("items");
 
         for (int i = 0; i <= itemsQuantity - 1; i++) {
@@ -80,30 +83,123 @@ public class Api {
             ShopItem shopItem = new ShopItem(name, price, rarity, type, image);
             ShopItems.add(shopItem);
         }
+        EventBus.getDefault().post(new storeStatus(true));
 
-
-
-
-        if(ShopItems.size() == itemsQuantity) {
-            EventBus.getDefault().post(new DatabaseChangeEvent(true, itemsQuantity, ShopItems));
-
-        } else {
-            EventBus.getDefault().post(new DatabaseChangeEvent(false, itemsQuantity, ShopItems));
-
-        }
 
     }
 
 
 
-    public static class DatabaseChangeEvent {
-        public DatabaseChangeEvent(boolean loaded, long itemsQuantity, ArrayList<ShopItem> shopItems) {
-            this.loaded = loaded;
-            this.shopItems = shopItems;
-            this.itemsQuantity = itemsQuantity;
+
+
+
+
+
+    //делаем запрос к апишке и получаем код
+    public static void loadId(String username) {
+        final Request request = new Request.Builder().url(UserIdApi + "?username=" + username).build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("AFSPIGIPSG", "Id Connected failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e("AFSPIGIPSG", "Id Connected Successful");
+                String data = response.body().string();
+                try {
+                    parseId(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+
+
+    //получаем информацию из апишки
+    public static void parseId(String username)throws JSONException {
+        JSONObject rootObject = new JSONObject(username);
+        String id = rootObject.getString("uid");
+        List<String> platforms = new ArrayList<>();
+
+
+        JSONArray items = rootObject.getJSONArray("platforms");
+        for (int i = 0; i <= items.length() - 1; i++) {
+            String platform = items.get(i).toString();
+            platforms.add(platform);
         }
-        ArrayList<ShopItem> shopItems;
-        long itemsQuantity;
+
+        userInfo = new UserInfo(id, platforms);
+        EventBus.getDefault().post(new idStatus(true));
+
+    }
+
+
+
+
+
+    public static void loadStats(String id, String platform) {
+        final Request request = new Request.Builder().url(UserStatsApi + "?user_id=" + id + "&platform=" + platform).build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("AFSPIGIPSG", "Id Connected failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e("AFSPIGIPSG", "Id Connected Successful");
+                String data = response.body().string();
+                try {
+                    parseStats(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+
+
+    //получаем информацию из апишки
+    public static void parseStats(String username)throws JSONException {
+        ShopItems.clear();
+        JSONObject rootObject = new JSONObject(username);
+
+    }
+
+
+
+
+
+
+
+
+    public static class storeStatus {
+        public storeStatus(boolean loaded) {
+            this.loaded = loaded;
+        }
+        boolean loaded;
+    }
+
+    public static class idStatus {
+        public idStatus(boolean loaded) {
+            this.loaded = loaded;
+        }
+        boolean loaded;
+    }
+
+    public static class statsStatus {
+        public statsStatus(boolean loaded) {
+            this.loaded = loaded;
+        }
         boolean loaded;
     }
 
@@ -114,5 +210,4 @@ public class Api {
     public enum language{
         en, de
     }
-
 }
