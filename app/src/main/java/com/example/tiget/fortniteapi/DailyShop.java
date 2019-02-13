@@ -141,4 +141,3 @@ class ShopAdapter extends BaseAdapter {
     // references to our images
 
 }
-
