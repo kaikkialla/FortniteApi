@@ -17,12 +17,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.tiget.fortniteapi.model.ShopResult;
+import com.example.tiget.fortniteapi.service.Service;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.tiget.fortniteapi.Api.loadStore;
 import static com.example.tiget.fortniteapi.MainActivity.BackgroundScreens;
@@ -47,16 +54,16 @@ public class DailyShop extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter = new ShopAdapter(getContext());
+        adapter = new ShopAdapter(getActivity());
         bg = view.findViewById(R.id.bg);
         bg.setImageResource(BackgroundScreens[sharedPreferences.getInt("image", 0)]);
 
-        loadStore();
         gridview = view.findViewById(R.id.gridView);
         gridview.setNumColumns(2);
         gridview.setAdapter(adapter);
+        Log.e("fpkspfsa", "Succ0");
     }
-
+/*
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void StoreStatusEvent(Api.storeStatus event) {
         if(event.loaded == true) {
@@ -64,9 +71,6 @@ public class DailyShop extends Fragment {
             gridview.setAdapter(adapter);
 
         }
-
-
-
     }
 
 
@@ -81,6 +85,7 @@ public class DailyShop extends Fragment {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+    */
 }
 
 
@@ -108,7 +113,9 @@ class ShopAdapter extends BaseAdapter {
     }
 
 
+
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.e("fpkspfsa", "Succ");
         View view;
         ImageView icon;
         TextView name;
@@ -122,6 +129,8 @@ class ShopAdapter extends BaseAdapter {
             view = convertView;
         }
 
+
+
         icon = view.findViewById(R.id.icon);
         name = view.findViewById(R.id.name);
         price = view.findViewById(R.id.price);
@@ -130,14 +139,29 @@ class ShopAdapter extends BaseAdapter {
         icon.setLayoutParams(params);
 
         name.setSelected(true);
-        ShopItem item = Api.ShopItems.get(position);
-        Glide.with(mContext).load(item.image).into(icon);
-        name.setText(item.name);
-        price.setText(String.valueOf(item.price));
 
 
+
+        Service.getSevices().getShop("en").enqueue(new Callback<ShopResult>() {
+            @Override
+            public void onResponse(Call<ShopResult> call, Response<ShopResult> response) {
+                Log.e("fpkspfsa", "Success");
+                //List<ShopResult> item = response.body().items.get(position);
+                //Glide.with(mContext).load(item.image).into(icon);
+                //name.setText(item.name);
+               // price.setText(String.valueOf(item.price));
+                //Log.e("fpkspfsa", "Success");
+            }
+
+            @Override
+            public void onFailure(Call<ShopResult> call, Throwable t) {
+                Log.e("fpkspfsa", "Fail");
+            }
+        });
         return view;
     }
+
+
 
     // references to our images
 

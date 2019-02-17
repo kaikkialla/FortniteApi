@@ -58,7 +58,7 @@ public class StatsFragment extends Fragment {
 
 
     }
-
+/*
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void StoreStatusEvent(Api.idStatus event) {
         if(event.loaded == true) {
@@ -85,4 +85,5 @@ public class StatsFragment extends Fragment {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+    */
 }
