@@ -15,27 +15,39 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.tiget.fortniteapi.model.Item;
 import com.example.tiget.fortniteapi.model.ShopResult;
 import com.example.tiget.fortniteapi.service.Service;
 
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.tiget.fortniteapi.DailyShop.adapter;
 import static com.example.tiget.fortniteapi.DailyShop.setBackground;
 import static com.example.tiget.fortniteapi.MainActivity.BackgroundScreens;
 import static com.example.tiget.fortniteapi.MainActivity.SCREEN_WIDTH_PX;
 import static com.example.tiget.fortniteapi.MainActivity.density;
 import static com.example.tiget.fortniteapi.MainActivity.sharedPreferences;
+import static com.example.tiget.fortniteapi.Presenter.requestShop;
+import static com.example.tiget.fortniteapi.ShopAdapter.mIcon;
+import static com.example.tiget.fortniteapi.ShopAdapter.mItems;
+import static com.example.tiget.fortniteapi.ShopAdapter.setInfo;
 
 
 public class DailyShop extends Fragment {
 
     static ImageView bg;
     static GridView gridview;
-    static ShopAdapter adapter;
+    public static ShopAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,13 +93,42 @@ class Presenter{
         int image = BackgroundScreens[id];
         DailyShop.setBackground(image);
     }
+
+    public static void requestShop(String language, int pos) {
+        Service.getInstance().getShop(language).enqueue(new Callback<ShopResult>() {
+            @Override
+            public void onResponse(Call<ShopResult> call, Response<ShopResult> response) {
+            List<Item> itemList = response.body().items;
+            String image =  itemList.get(pos).image;
+            String name = itemList.get(pos).name;
+            int price =  itemList.get(pos).price;
+
+
+            /*
+                В mItems добавляем новый элемент и делаем swap(еще и в onResume)
+
+             */
+            //mItems.add(new Item(image, name, price));
+            //mItems.add(new Item());
+            setInfo(image, name, price);
+
+            adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<ShopResult> call, Throwable t) {}
+        });
+    }
 }
 
 
 
 class ShopAdapter extends BaseAdapter {
-    private Context mContext;
-    Response<ShopResult> resultResponse;
+    public static List<Item> mItems = new ArrayList<>();
+    private static Context mContext;
+    private static ImageView mIcon;
+    private static TextView mName;
+    private static TextView mPrice;
 
     public ShopAdapter(Context c) {
         this.mContext = c;
@@ -97,11 +138,11 @@ class ShopAdapter extends BaseAdapter {
 
 
     public int getCount() {
-        return 1;
+        return mItems.size();
     }
 
     public Object getItem(int position) {
-        return 1;
+        return mItems.get(position);
     }
 
     public long getItemId(int position) {
@@ -111,11 +152,7 @@ class ShopAdapter extends BaseAdapter {
 
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.e("fpkspfsa", "Succ");
         View view;
-        ImageView icon;
-        TextView name;
-        TextView price;
 
         if (convertView == null) {
             view = new View(mContext);
@@ -125,33 +162,31 @@ class ShopAdapter extends BaseAdapter {
             view = convertView;
         }
 
-
-
-        icon = view.findViewById(R.id.icon);
-        name = view.findViewById(R.id.name);
-        price = view.findViewById(R.id.price);
+        mIcon = view.findViewById(R.id.icon);
+        mName = view.findViewById(R.id.name);
+        mPrice = view.findViewById(R.id.price);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(SCREEN_WIDTH_PX - 8 * density) / 2, (int)(SCREEN_WIDTH_PX - 8 * density) / 2);
-        icon.setLayoutParams(params);
+        mIcon.setLayoutParams(params);
 
-        name.setSelected(true);
+        mName.setSelected(true);
 
+        requestShop("en", position);
 
-
-        Service.getSevices().getShop("en").enqueue(new Callback<ShopResult>() {
-            @Override
-            public void onResponse(Call<ShopResult> call, Response<ShopResult> response) {
-                Log.e("fpkspfsa", "Success");
-                resultResponse = response;
-
-            }
-
-            @Override
-            public void onFailure(Call<ShopResult> call, Throwable t) {
-                Log.e("fpkspfsa", "Fail");
-            }
-        });
         return view;
+
+
+    }
+
+    public static void setInfo(String image, String name, int price) {
+        Glide.with(mContext).load(image).into(mIcon);
+        mName.setText(name);
+        mPrice.setText(String.valueOf(price));
+    }
+
+    public void swap(List<Item> items) {
+        mItems = items;
+        notifyDataSetChanged();
     }
 
 

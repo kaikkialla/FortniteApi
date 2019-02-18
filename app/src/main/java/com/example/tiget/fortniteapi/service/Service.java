@@ -10,11 +10,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Service {
     static FortniteService fortniteService;
 
-    public static FortniteService getSevices() {
+    public static FortniteService getInstance() {
         if (fortniteService == null) {
             final Gson gson = new GsonBuilder().setLenient().create();
             final Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://fortnite-public-api.theapinetwork.com")
+                    .baseUrl("https://fortnite-public-api.theapinetwork.com/prod09/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 

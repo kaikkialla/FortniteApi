@@ -11,7 +11,7 @@ public interface FortniteService {
 
 
 
-    @GET("https://fortnite-public-api.theapinetwork.com/prod09/store/get")
+    @GET("store/get")
     Call<ShopResult> getShop(@Query("language") String address);
 /*
     @GET("http://api.etherscan.io/api?module=account&action=txlist&startblock=0&endblock=99999999&sort=asc&apikey=" + API_KEY)
