@@ -21,7 +21,7 @@ import okhttp3.Response;
 
 public class Api {
 
-
+/*
     public static ArrayList<ShopItem> ShopItems = new ArrayList<>();
     //public static int itemsQuantity;
     public static UserInfo userInfo;
@@ -210,4 +210,5 @@ public class Api {
     public enum language{
         en, de
     }
+    */
 }

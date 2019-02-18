@@ -10,26 +10,3 @@ public class ShopResult {
     @Expose
     List<Item> items;
 }
-
-
-class Item {
-    @SerializedName("name")
-    @Expose
-    String name;
-
-    @SerializedName("cost")
-    @Expose
-    int price;
-
-    @SerializedName("rarity")
-    @Expose
-    String rarity;
-
-    @SerializedName("type")
-    @Expose
-    String type;
-
-    @SerializedName("image")
-    @Expose
-    String image;
-}

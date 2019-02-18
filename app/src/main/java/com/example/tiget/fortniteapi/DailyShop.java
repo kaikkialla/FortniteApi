@@ -16,22 +16,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.tiget.fortniteapi.model.ShopResult;
 import com.example.tiget.fortniteapi.service.Service;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.tiget.fortniteapi.Api.loadStore;
+import static com.example.tiget.fortniteapi.DailyShop.setBackground;
 import static com.example.tiget.fortniteapi.MainActivity.BackgroundScreens;
 import static com.example.tiget.fortniteapi.MainActivity.SCREEN_WIDTH_PX;
 import static com.example.tiget.fortniteapi.MainActivity.density;
@@ -40,9 +33,9 @@ import static com.example.tiget.fortniteapi.MainActivity.sharedPreferences;
 
 public class DailyShop extends Fragment {
 
-    ImageView bg;
-    GridView gridview;
-    ShopAdapter adapter;
+    static ImageView bg;
+    static GridView gridview;
+    static ShopAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,44 +47,47 @@ public class DailyShop extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         adapter = new ShopAdapter(getActivity());
         bg = view.findViewById(R.id.bg);
-        bg.setImageResource(BackgroundScreens[sharedPreferences.getInt("image", 0)]);
-
         gridview = view.findViewById(R.id.gridView);
+
         gridview.setNumColumns(2);
         gridview.setAdapter(adapter);
-        Log.e("fpkspfsa", "Succ0");
-    }
-/*
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void StoreStatusEvent(Api.storeStatus event) {
-        if(event.loaded == true) {
-            adapter.notifyDataSetChanged();
-            gridview.setAdapter(adapter);
-
-        }
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
+    public void onResume() {
+        super.onResume();
+        Presenter.getInstance().setBackground();
     }
-    */
+
+    public static void setBackground(int i) {
+        bg.setImageResource(i);
+    }
 }
+
+
+class Presenter{
+
+    public static Presenter instance;
+    public static Presenter getInstance() {
+        if (instance == null) { instance = new Presenter(); }
+        return instance;
+    }
+
+    public void setBackground() {
+        int id = sharedPreferences.getInt("image", 0);
+        int image = BackgroundScreens[id];
+        DailyShop.setBackground(image);
+    }
+}
+
 
 
 class ShopAdapter extends BaseAdapter {
     private Context mContext;
-
+    Response<ShopResult> resultResponse;
 
     public ShopAdapter(Context c) {
         this.mContext = c;
@@ -101,11 +97,11 @@ class ShopAdapter extends BaseAdapter {
 
 
     public int getCount() {
-        return Api.ShopItems.size();
+        return 1;
     }
 
     public Object getItem(int position) {
-        return Api.ShopItems.get(position);
+        return 1;
     }
 
     public long getItemId(int position) {
@@ -146,11 +142,8 @@ class ShopAdapter extends BaseAdapter {
             @Override
             public void onResponse(Call<ShopResult> call, Response<ShopResult> response) {
                 Log.e("fpkspfsa", "Success");
-                //List<ShopResult> item = response.body().items.get(position);
-                //Glide.with(mContext).load(item.image).into(icon);
-                //name.setText(item.name);
-               // price.setText(String.valueOf(item.price));
-                //Log.e("fpkspfsa", "Success");
+                resultResponse = response;
+
             }
 
             @Override

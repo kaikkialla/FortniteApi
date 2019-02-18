@@ -13,13 +13,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
-import static com.example.tiget.fortniteapi.Api.loadStore;
-import static com.example.tiget.fortniteapi.Api.userInfo;
+
 import static com.example.tiget.fortniteapi.MainActivity.BackgroundScreens;
 import static com.example.tiget.fortniteapi.MainActivity.sharedPreferences;
 
@@ -52,7 +47,7 @@ public class StatsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String uname = editText.getText().toString();
-                Api.loadId(uname);
+                //Api.loadId(uname);
             }
         });
 

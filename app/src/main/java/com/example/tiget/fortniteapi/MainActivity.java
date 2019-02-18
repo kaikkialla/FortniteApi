@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
 
 
-        Api.loadId("Atlantis Mitr0");
 
 
         Colors = new int[]{
@@ -57,12 +56,8 @@ public class MainActivity extends AppCompatActivity {
             getResources().getColor(R.color.colorOrange)};
 
 
-
         editor.putInt("image", (int) (Math.random() * BackgroundScreens.length));
         editor.apply();
-
-
-        Log.e("fkpoasfpoa","Main" + sharedPreferences.getInt("image", -1));
 
 
         DisplayMetrics dm = new DisplayMetrics();

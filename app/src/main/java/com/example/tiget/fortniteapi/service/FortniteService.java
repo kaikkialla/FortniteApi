@@ -1,5 +1,6 @@
 package com.example.tiget.fortniteapi.service;
 
+
 import com.example.tiget.fortniteapi.model.ShopResult;
 
 import retrofit2.Call;

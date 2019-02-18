@@ -14,7 +14,7 @@ public class Service {
         if (fortniteService == null) {
             final Gson gson = new GsonBuilder().setLenient().create();
             final Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://fortniteapi.com/")
+                    .baseUrl("https://fortnite-public-api.theapinetwork.com")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
