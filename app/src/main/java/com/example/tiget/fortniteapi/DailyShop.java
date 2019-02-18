@@ -39,8 +39,7 @@ import static com.example.tiget.fortniteapi.MainActivity.density;
 import static com.example.tiget.fortniteapi.MainActivity.sharedPreferences;
 import static com.example.tiget.fortniteapi.Presenter.requestShop;
 import static com.example.tiget.fortniteapi.ShopAdapter.mIcon;
-import static com.example.tiget.fortniteapi.ShopAdapter.mItems;
-import static com.example.tiget.fortniteapi.ShopAdapter.setInfo;
+
 
 
 public class DailyShop extends Fragment {
@@ -98,21 +97,7 @@ class Presenter{
         Service.getInstance().getShop(language).enqueue(new Callback<ShopResult>() {
             @Override
             public void onResponse(Call<ShopResult> call, Response<ShopResult> response) {
-            List<Item> itemList = response.body().items;
-            String image =  itemList.get(pos).image;
-            String name = itemList.get(pos).name;
-            int price =  itemList.get(pos).price;
-
-
-            /*
-                В mItems добавляем новый элемент и делаем swap(еще и в onResume)
-
-             */
-            //mItems.add(new Item(image, name, price));
-            //mItems.add(new Item());
-            setInfo(image, name, price);
-
-            adapter.notifyDataSetChanged();
+                adapter.swap(response.body().items);
             }
 
             @Override
@@ -162,6 +147,7 @@ class ShopAdapter extends BaseAdapter {
             view = convertView;
         }
 
+
         mIcon = view.findViewById(R.id.icon);
         mName = view.findViewById(R.id.name);
         mPrice = view.findViewById(R.id.price);
@@ -173,15 +159,12 @@ class ShopAdapter extends BaseAdapter {
 
         requestShop("en", position);
 
+        Item item = mItems.get(position);
+
+
         return view;
 
 
-    }
-
-    public static void setInfo(String image, String name, int price) {
-        Glide.with(mContext).load(image).into(mIcon);
-        mName.setText(name);
-        mPrice.setText(String.valueOf(price));
     }
 
     public void swap(List<Item> items) {
